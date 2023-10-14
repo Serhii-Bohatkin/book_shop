@@ -6,7 +6,9 @@ import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.mapper.BookMapper;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.repository.BookRepository;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +33,26 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto findBookById(Long id) {
-        Book book = bookRepository.findBookById(id).orElseThrow(
+    public BookDto findById(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't get a book by id " + id));
         return bookMapper.toDto(book);
+    }
+
+    @Override
+    public BookDto update(CreateBookRequestDto requestDto, Long id) {
+        Book bookFromDB = bookRepository.findById(id).get();
+        bookFromDB.setTitle(requestDto.getTitle());
+        bookFromDB.setAuthor(requestDto.getAuthor());
+        bookFromDB.setIsbn(requestDto.getIsbn());
+        bookFromDB.setPrice(requestDto.getPrice());
+        bookFromDB.setDescription(requestDto.getDescription());
+        bookFromDB.setCoverImage(requestDto.getCoverImage());
+        return bookMapper.toDto(bookRepository.save(bookFromDB));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+       bookRepository.deleteById(id);
     }
 }
