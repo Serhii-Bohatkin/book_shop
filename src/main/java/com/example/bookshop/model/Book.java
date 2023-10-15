@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLDeletes;
 import org.hibernate.annotations.Where;
 
 @Entity
