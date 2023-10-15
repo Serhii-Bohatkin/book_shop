@@ -23,7 +23,7 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public List getAll() {
+    public List<BookDto> getAll() {
         return bookService.findAll();
     }
 

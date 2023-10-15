@@ -6,9 +6,7 @@ import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.mapper.BookMapper;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.repository.BookRepository;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +39,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto update(CreateBookRequestDto requestDto, Long id) {
-        Book bookFromDB = bookRepository.findById(id).get();
+        Book bookFromDB = bookRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can't update a book with id " + id));
         bookFromDB.setTitle(requestDto.getTitle());
         bookFromDB.setAuthor(requestDto.getAuthor());
         bookFromDB.setIsbn(requestDto.getIsbn());
@@ -53,6 +52,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteById(Long id) {
-       bookRepository.deleteById(id);
+        bookRepository.deleteById(id);
     }
 }
