@@ -1,6 +1,6 @@
 package com.example.bookshop.repository.book;
 
-import com.example.bookshop.dto.BookSearchParametersDto;
+import com.example.bookshop.dto.book.BookSearchParametersDto;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.repository.SpecificationBuilder;
 import lombok.AllArgsConstructor;
