@@ -1,10 +1,11 @@
-package com.example.bookshop.validation;
+package com.example.bookshop.validation.impl;
 
+import com.example.bookshop.validation.FieldsMatch;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
 
-public class FieldsValueMatchValidator implements ConstraintValidator<FieldsMatch,Object> {
+public class FieldsValueMatchValidator implements ConstraintValidator<FieldsMatch, Object> {
     private String field;
     private String fieldMatch;
 
