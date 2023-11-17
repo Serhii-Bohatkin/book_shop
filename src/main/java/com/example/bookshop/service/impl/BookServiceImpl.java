@@ -1,16 +1,21 @@
-package com.example.bookshop.service;
+package com.example.bookshop.service.impl;
 
 import com.example.bookshop.dto.book.BookDto;
+import com.example.bookshop.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookshop.dto.book.BookSearchParametersDto;
 import com.example.bookshop.dto.book.CreateBookRequestDto;
 import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.mapper.BookMapper;
 import com.example.bookshop.model.Book;
+import com.example.bookshop.model.Category;
 import com.example.bookshop.repository.book.BookRepository;
 import com.example.bookshop.repository.book.BookSpecificationBuilder;
+import com.example.bookshop.repository.category.CategoryRepository;
+import com.example.bookshop.service.BookService;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -18,12 +23,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
-    @Autowired
     private final BookRepository bookRepository;
-    @Autowired
     private final BookMapper bookMapper;
-    @Autowired
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public BookDto save(CreateBookRequestDto requestDto) {
@@ -48,15 +51,20 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto update(CreateBookRequestDto requestDto, Long id) {
-        Book bookFromDB = bookRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Can't update a book with id " + id));
-        bookFromDB.setTitle(requestDto.getTitle());
-        bookFromDB.setAuthor(requestDto.getAuthor());
-        bookFromDB.setIsbn(requestDto.getIsbn());
-        bookFromDB.setPrice(requestDto.getPrice());
-        bookFromDB.setDescription(requestDto.getDescription());
-        bookFromDB.setCoverImage(requestDto.getCoverImage());
-        return bookMapper.toDto(bookRepository.save(bookFromDB));
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException("Can't update a book with id " + id);
+        }
+        Book book = bookMapper.toModel(requestDto);
+        book.setId(id);
+        Set<Category> categories = new HashSet<>();
+        for (Long categoryId : requestDto.getCategoryIds()) {
+            if (!categoryRepository.existsById(categoryId)) {
+                throw new EntityNotFoundException("Category with id: " + id + " not found");
+            }
+            categories.add(new Category(categoryId));
+        }
+        book.setCategories(categories);
+        return bookMapper.toDto(bookRepository.save(book));
     }
 
     @Override
@@ -69,6 +77,13 @@ public class BookServiceImpl implements BookService {
         Specification<Book> bookSpecification = bookSpecificationBuilder.build(searchParameters);
         return bookRepository.findAll(bookSpecification, pageable).stream()
                 .map(bookMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<BookDtoWithoutCategoryIds> findAllByCategoryId(Long categoryId, Pageable pageable) {
+        return bookRepository.findAllByCategoryId(categoryId, pageable).stream()
+                .map(bookMapper::toDtoWithoutCategories)
                 .toList();
     }
 }
