@@ -7,6 +7,7 @@ import com.example.bookshop.service.BookService;
 import com.example.bookshop.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,15 +34,15 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Create a category by id", description = "Create a category by id")
     @PostMapping
-    public CategoryDto createCategory(@RequestBody CreateCategoryRequestDto requestDto) {
+    public CategoryDto createCategory(@RequestBody @Valid CreateCategoryRequestDto requestDto) {
         return categoryService.save(requestDto);
     }
 
     @Operation(summary = "Get all categories",
             description = "Get a list of all available categories. "
-            + "Pagination: add a ? followed by the query {page}={value}&{size}={value} "
-            + "For example: /categories?page=0&size=10 "
-            + "Sorting: add & followed by {sort}={field} or {sort}={field, DESC}")
+                    + "Pagination: add a ? followed by the query {page}={value}&{size}={value} "
+                    + "For example: /categories?page=0&size=10 "
+                    + "Sorting: add & followed by {sort}={field} or {sort}={field, DESC}")
     @GetMapping
     public List<CategoryDto> getAll(Pageable pageable) {
         return categoryService.findAll(pageable);
@@ -57,7 +58,7 @@ public class CategoryController {
     @Operation(summary = "Update category", description = "Update category by id")
     @PutMapping("/{id}")
     public CategoryDto updateCategory(
-            @PathVariable Long id, @RequestBody CreateCategoryRequestDto requestDto) {
+            @PathVariable Long id, @RequestBody @Valid CreateCategoryRequestDto requestDto) {
         return categoryService.update(id, requestDto);
     }
 
