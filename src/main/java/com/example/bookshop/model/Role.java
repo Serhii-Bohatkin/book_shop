@@ -25,7 +25,7 @@ public class Role {
     @Column(nullable = false, unique = true)
     private RoleName name;
     @Column(nullable = false)
-    private boolean isDeleted;
+    private boolean isDeleted = false;
 
     public enum RoleName {
         USER,
