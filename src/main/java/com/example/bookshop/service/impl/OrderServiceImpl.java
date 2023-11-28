@@ -37,33 +37,24 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemMapper orderItemMapper;
     private final OrderMapper orderMapper;
 
-    public OrderDto createOrder(Authentication authentication,
-                                OrderShippingAddressDto shippingAddressDto) {
+    public OrderDto placeOrder(Authentication authentication,
+                               OrderShippingAddressDto shippingAddressDto) {
         User user = getCurrentUser(authentication);
-        ShoppingCart shoppingCart = shoppingCartRepository.findShoppingCartByUserId(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Can't find a shopping cart by user id " + user.getId()));
-        Order order = new Order();
-        order.setUser(user);
-        order.setStatus(Order.Status.NEW);
-        order.setTotal(calculateAmount(shoppingCart));
-        order.setOrderDate(LocalDateTime.now());
-        order.setShippingAddress(shippingAddressDto.getShippingAddress());
-        Order orderFromDb = orderRepository.save(order);
-        Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
-                .map(cartItem -> orderItemMapper.toOrderItem(cartItem, orderFromDb))
-                .map(orderItemRepository::save)
-                .collect(Collectors.toSet());
-        orderFromDb.setOrderItems(orderItems);
+        ShoppingCart shoppingCart = findShoppingCart(user.getId());
+        String shippingAddress = shippingAddressDto.getShippingAddress();
+        Order order = createOrder(user, shoppingCart, shippingAddress);
         shoppingCartRepository.delete(shoppingCart);
-        return orderMapper.toDto(orderRepository.save(orderFromDb));
+        return orderMapper.toDto(orderRepository.save(order));
     }
 
     @Override
-    public OrderDto updateStatus(Long id, OrderStatusDto statusDto, Authentication authentication) {
+    public OrderDto updateStatus(
+            Long orderId,
+            OrderStatusDto statusDto,
+            Authentication authentication
+    ) {
         User user = getCurrentUser(authentication);
-        Order order = orderRepository.findByIdAndUserId(id, user.getId()).orElseThrow(()
-                -> new EntityNotFoundException("Can't find an order with id " + id));
+        Order order = findOrder(orderId, user);
         order.setStatus(statusDto.getStatus());
         return orderMapper.toDto(orderRepository.save(order));
     }
@@ -80,8 +71,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderItemDto> getAllOrderItems(
             Long orderId, Authentication authentication, Pageable pageable) {
         User user = getCurrentUser(authentication);
-        Order order = orderRepository.findByIdAndUserId(orderId, user.getId()).orElseThrow(()
-                -> new EntityNotFoundException("Can't find an order with id " + orderId));
+        Order order = findOrder(orderId, user);
         return order.getOrderItems().stream()
                 .map(orderItemMapper::toDto)
                 .toList();
@@ -106,9 +96,41 @@ public class OrderServiceImpl implements OrderService {
         return BigDecimal.valueOf(total);
     }
 
-    User getCurrentUser(Authentication authentication) {
+    private User getCurrentUser(Authentication authentication) {
         String email = authentication.getName();
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException("User with email " + email + " not found"));
+    }
+
+    private ShoppingCart findShoppingCart(Long userId) {
+        return shoppingCartRepository.findShoppingCartByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Can't find a shopping cart by user id " + userId));
+    }
+
+    private Order findOrder(Long id, User user) {
+        return orderRepository.findByIdAndUserId(id, user.getId()).orElseThrow(()
+                -> new EntityNotFoundException(
+                "Can't find an order with id " + id));
+    }
+
+    private Set<OrderItem> getOrderItems(ShoppingCart shoppingCart, Order orderFromDb) {
+        return shoppingCart.getCartItems().stream()
+                .map(cartItem -> orderItemMapper.toOrderItem(cartItem, orderFromDb))
+                .map(orderItemRepository::save)
+                .collect(Collectors.toSet());
+    }
+
+    private Order createOrder(User user, ShoppingCart shoppingCart, String shippingAddress) {
+        Order order = new Order();
+        order.setUser(user);
+        order.setStatus(Order.Status.NEW);
+        order.setTotal(calculateAmount(shoppingCart));
+        order.setOrderDate(LocalDateTime.now());
+        order.setShippingAddress(shippingAddress);
+        Order orderFromDb = orderRepository.save(order);
+        Set<OrderItem> orderItems = getOrderItems(shoppingCart, orderFromDb);
+        orderFromDb.setOrderItems(orderItems);
+        return order;
     }
 }

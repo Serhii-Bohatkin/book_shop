@@ -39,7 +39,7 @@ public class OrderController {
     @PostMapping
     public OrderDto placeOrder(Authentication authentication,
                                @RequestBody @Valid OrderShippingAddressDto shippingAddressDto) {
-        return orderService.createOrder(authentication, shippingAddressDto);
+        return orderService.placeOrder(authentication, shippingAddressDto);
     }
 
     @Operation(summary = "Update order status",

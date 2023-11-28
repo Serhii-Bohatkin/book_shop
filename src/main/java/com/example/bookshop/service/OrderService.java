@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 public interface OrderService {
-    OrderDto createOrder(Authentication authentication,
-                         OrderShippingAddressDto shippingAddressDto);
+    OrderDto placeOrder(Authentication authentication,
+                        OrderShippingAddressDto shippingAddressDto);
 
     OrderDto updateStatus(Long orderId, OrderStatusDto statusDto, Authentication authentication);
 
