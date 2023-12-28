@@ -1,4 +1,4 @@
-package com.example.bookshop.service.impl;
+package com.example.bookshop.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,6 +12,7 @@ import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.mapper.CategoryMapper;
 import com.example.bookshop.model.Category;
 import com.example.bookshop.repository.category.CategoryRepository;
+import com.example.bookshop.service.impl.CategoryServiceImpl;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;

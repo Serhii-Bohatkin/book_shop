@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItemDto> allOrderItems = getAllOrderItems(
                 orderId, authentication, Pageable.unpaged());
         return allOrderItems.stream()
-                .filter(item -> Objects.equals(item.getId(), itemId))
+                .filter(item -> item != null && Objects.equals(item.getId(), itemId))
                 .findFirst()
                 .orElseThrow(()
                         -> new EntityNotFoundException("Can't find item with id " + itemId));
