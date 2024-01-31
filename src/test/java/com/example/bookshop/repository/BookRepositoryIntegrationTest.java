@@ -1,10 +1,12 @@
-package com.example.bookshop.repository.book;
+package com.example.bookshop.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.bookshop.dto.book.BookSearchParametersDto;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.model.Category;
+import com.example.bookshop.repository.book.BookRepository;
+import com.example.bookshop.repository.book.BookSpecificationBuilder;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +24,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class BookRepositoryTest {
+public class BookRepositoryIntegrationTest {
     private static final String SQL_SCRIPT_BEFORE_TEST =
             "classpath:database/add-data-for-book-category-test.sql";
     private static final String SQL_SCRIPT_AFTER_TEST =

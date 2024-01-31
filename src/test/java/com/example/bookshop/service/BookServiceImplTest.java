@@ -1,4 +1,4 @@
-package com.example.bookshop.service.impl;
+package com.example.bookshop.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,6 +17,7 @@ import com.example.bookshop.model.Book;
 import com.example.bookshop.repository.book.BookRepository;
 import com.example.bookshop.repository.book.BookSpecificationBuilder;
 import com.example.bookshop.repository.category.CategoryRepository;
+import com.example.bookshop.service.impl.BookServiceImpl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
