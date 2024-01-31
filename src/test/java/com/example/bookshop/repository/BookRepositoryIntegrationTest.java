@@ -24,7 +24,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class BookRepositoryTest {
+public class BookRepositoryIntegrationTest {
     private static final String SQL_SCRIPT_BEFORE_TEST =
             "classpath:database/add-data-for-book-category-test.sql";
     private static final String SQL_SCRIPT_AFTER_TEST =

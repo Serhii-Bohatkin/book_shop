@@ -14,7 +14,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ShoppingCartRepositoryTest {
+public class ShoppingCartRepositoryIntegrationTest {
     private static final String SQL_SCRIPT_BEFORE_TEST =
             "classpath:database/add-data-for-shoppingcart-cartitem-test.sql";
     private static final String SQL_SCRIPT_AFTER_TEST =

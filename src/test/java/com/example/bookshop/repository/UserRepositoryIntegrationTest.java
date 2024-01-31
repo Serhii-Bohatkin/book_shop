@@ -15,7 +15,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryTest {
+public class UserRepositoryIntegrationTest {
     private static final String SQL_SCRIPT_BEFORE_TEST =
             "classpath:database/add-data-for-user-test.sql";
     private static final String SQL_SCRIPT_AFTER_TEST =

@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class OrderRepositoryTest {
+public class OrderRepositoryIntegrationTest {
     private static final String SQL_SCRIPT_BEFORE_TEST =
             "classpath:database/add-data-for-order-orderitem-test.sql";
     private static final String SQL_SCRIPT_AFTER_TEST =
